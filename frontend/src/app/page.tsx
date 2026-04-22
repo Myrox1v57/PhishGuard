@@ -10,7 +10,7 @@ export default async function Page() {
 
   return (
     <main className={styles.main}>
-      <h1>Hello World</h1>
+      <h1>Hello Bau</h1>
     </main>
   )
 }
