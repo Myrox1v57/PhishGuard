@@ -1,13 +1,16 @@
 import styles from "./page.module.css";
-export default function Home() {
+import { createClient } from './utils/superbase/server'
+import { cookies } from 'next/headers'
+
+export default async function Page() {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: todos } = await supabase.from('todos').select()
+
   return (
-    
-    <header className={styles.header}>
-        <h1 className={styles.title}>Welcome to PhishGuard</h1>
-        <p className={styles.description}>
-          Your AI-powered phishing detection and prevention tool
-        </p>
-      
-    </header>
-  );
+    <main className={styles.main}>
+      <h1>Hello World</h1>
+    </main>
+  )
 }
