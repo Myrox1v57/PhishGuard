@@ -1,16 +1,13 @@
 import styles from "./page.module.css";
-import { createClient } from './utils/superbase/server'
-import { cookies } from 'next/headers'
+import { createClient } from "./utils/superbase/client";
+import HeaderSection from "./components/HomePage/HeaderSection/HeaderSection";
 
-export default async function Page() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
-
-  const { data: todos } = await supabase.from('todos').select()
-
+export default function Page() {
+  const supabase = createClient();
   return (
-    <main className={styles.main}>
-      <h1>Hello Bau</h1>
-    </main>
-  )
+    <section className={styles.page}>
+      <HeaderSection />
+      
+    </section>
+  );
 }
