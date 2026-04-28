@@ -1,13 +1,17 @@
 
 
 .nav {
-    width: min(1500px, 100% - 2rem);
-    margin: 0 auto;
+    width: min(1200px, 100% - 2rem);
+    margin: 10px auto;
     min-height: 72px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+    border-radius: 60px;
+    border: 1px solid var(--purple-800);
+    background: var(--bg-glass);
+    padding: var(--spacing-medium) var(--spacing-xlarge);
 }
 
 .logo {
@@ -32,14 +36,14 @@
   color: var(--text-main);
   font-weight: 600;
   background: transparent;
-  border: 0;
+  border: 1px solid transparent;
   cursor: pointer;
-  transition: color var(--transition-fast);
+  transition: color var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
 }
 
 .link:hover,
 .dropdownTrigger:hover {
-  color: #B13BFF;
+  color: var(--purple-500);
 }
 .link:active,
 .dropdownTrigger:active {
@@ -49,42 +53,39 @@
   position: relative;
 }
 
-.dropdown {
-  position: relative;
-}
-
-.dropdownTrigger {
-  list-style: none;
-}
-
-.dropdownTrigger::-webkit-details-marker {
-  display: none;
-}
-
 .dropdownTrigger {
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  font-size: inherit;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.6rem;
+}
+
+.dropdownTrigger:focus-visible {
+  outline: none;
+  border-color: rgba(177, 59, 255, 0.45);
+  background: rgba(177, 59, 255, 0.08);
 }
 
 .dropdownArrow {
   width: 20px;
   height: 20px;
+  opacity: 0.8;
   transition: transform 0.2s ease, filter var(--transition-fast);
-  filter: invert(1);
 }
 
 .dropdownTrigger:hover .dropdownArrow {
-  /* Target: #f4f9e9 Ivory */
-  filter: brightness(0) saturate(100%) invert(96%) sepia(12%) saturate(500%) hue-rotate(52deg) brightness(103%);
+  opacity: 1;
+  filter: brightness(0.6) saturate(1.3);
 }
 
 .dropdownTrigger:active .dropdownArrow {
-  /* Target: #eef0eb Soft Linen */
-  filter: brightness(0) saturate(100%) invert(94%) sepia(6%) saturate(250%) hue-rotate(70deg) brightness(101%);
+  opacity: 1;
 }
 
-.dropdown[open] .dropdownArrow {
+.dropdownMenuOpen ~ .dropdownArrow,
+.dropdownTrigger[aria-expanded="true"] .dropdownArrow {
   transform: rotate(180deg);
 }
 
@@ -92,21 +93,30 @@
   position: absolute;
   top: calc(100% + 0.5rem);
   left: 0;
-  min-width: 200px;
+  min-width: 230px;
   list-style: none;
   margin: 0;
-  padding: var(--padding-small);
-  border-radius: 0.75rem;
-  background: var(--dropdown-bg);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
+  padding: var(--spacing-medium) var(--spacing-small);
+  border-radius: var(--border-radius-large);
+  background: var(--bg-overlay);
+  border: 1px solid var(--purple-800);
+  box-shadow: var(--shadow-glow-sm);
   display: grid;
   gap: 0.25rem;
   z-index: 20;
-
+  opacity: 0;
+  transform: translateY(-6px) scale(0.98);
+  transform-origin: top left;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity var(--transition-fast), transform var(--transition-fast), visibility var(--transition-fast);
 }
 
-.dropdown:not([open]) .dropdownMenu {
-  display: none;
+.dropdownMenuOpen {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  visibility: visible;
 }
 
 .dropdownLink {
@@ -114,13 +124,20 @@
   text-decoration: none;
   color: var(--text-main);
   font-weight: 500;
-  padding: 0.55rem 0.65rem;
+  padding: 0.6rem 0.7rem;
   border-radius: 0.5rem;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .dropdownLink:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--bg-overlay);
+  color: var(--text-active);
+}
+
+.dropdownLink:focus-visible {
+  outline: none;
+  background: var(--bg-overlay);
+  color: var(--text-active);
 }
 
 .actions {
@@ -143,32 +160,27 @@
 .ctaButton {
   text-decoration: none;
   color: var(--text-main);
-  background: black;
+  background: var(--gradient-border);
   padding: 0.55rem 0.9rem;
   border-radius: 0.55rem;
   font-weight: 600;
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition: var(--transition-medium);
 }
 
 .ctaButton:hover {
-  background: var(--text-active);
+  filter:saturate(0.8) brightness(0.8);
   color: #ffffff;
-  transition: var(--transition-medium) background, var(--transition-medium) color;
+  transition: var(--transition-fast);
 }
 
 @media (max-width: 900px) {
-  .nav {
-    min-height: auto;
-    padding: 0.85rem 0;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
 
   .linkList {
     order: 3;
     width: 100%;
     justify-content: center;
     flex-wrap: wrap;
+    display: none;
   }
 
   .actions {

@@ -7,6 +7,10 @@ export default function HeaderSection() {
             <HeaderBackground />
             <NavHeader />
             <div className={styles.content}>
+                <div className={styles.aiPoweredSection}>
+                    <img src="./sparkles.svg" alt="" className={styles.sparkles} />
+                    <p className={styles.aiPoweredText}>AI-Powered Phishing Detection</p>
+                </div>
                 <h1 className={styles.title}>PhishGuard: Your Ultimate Phishing Detection Solution</h1>
                 <p className={styles.subtitle}>Protect yourself from phishing attacks with our powerful and easy-to-use detection tool.</p>
                 <a href="/scanner/url" className={styles.ctaButton}>Get Started</a>

@@ -37,7 +37,7 @@
 .circle3 {
     width: 460px;
     height: 460px;
-    background: #8ea2a6;
+    background: var(--purple-800);
     top: 30%;
     left: 38%;
     transform: translate(-50%, -50%);
@@ -60,7 +60,7 @@
 .circle5 {
     width: 420px;
     height: 420px;
-    background: #284b63;
+    background: #1f3f53;
     bottom: -100px;
     right: 5%;
     animation: drift5 26s ease-in-out infinite;
@@ -70,7 +70,7 @@
 .circle6 {
     width: 260px;
     height: 260px;
-    background: #5b7785;
+    background: #1f3f53;
     top: 45%;
     left: -60px;
     opacity: 0.3;
@@ -81,7 +81,7 @@
 .circle7 {
     width: 200px;
     height: 200px;
-    background: #8ea2a6;
+    background: #1f3f53;
     top: 10%;
     left: 52%;
     opacity: 0.25;

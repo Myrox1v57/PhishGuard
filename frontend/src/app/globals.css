@@ -1,14 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Grotesk:wght@300..700&display=swap');
 
 :root {
-  /* Colors */
-  --text-main: #ffffff;
-  --text-active: #d089ff;
-  --dropdown-bg: #120619;
-  --text-muted: #94a3b8;
-  --border-color: #1f3f53;
-  --background: #EEF0EB;
-  --header-gradient: linear-gradient(135deg, #471396 0%, #471396 50%, #B13BFF 100%);
+  /*Background colors*/
+  --bg-base:          #120619;   /* Main page background */
+  --bg-deep:          #0a0310;   /* Deepest shade — footer, modals base */
+  --bg-elevated:      #1a0a24;   /* Cards, elevated surfaces */
+  --bg-glass:         rgba(26, 10, 36, 0.5);  /* Frosted header/nav */
+  --bg-overlay:       rgba(18, 6, 25, 0.85);  /* Modal backdrops */
+  /* Brand colors */
+   --text-main:        #ffffff;
+  --text-active:      #d089ff;
+  --text-muted:       #94a3b8;
+  --border-color:     #1f3f53;
+  --surface-light:    #EEF0EB;
+  /* Purple scale */
+   --purple-50:        #f5ebff;
+  --purple-100:       #e8d1ff;
+  --purple-200:       #dcb5ff;
+  --purple-300:       #d089ff; 
+  --purple-400:       #b866e8;
+  --purple-500:       #9d4cd1;
+  --purple-600:       #7a35a8;
+  --purple-700:       #5a2480;
+  --purple-800:       #3d1758;
+  --purple-900:       #240d36;
+  /* Text colors */
+  --text-primary:     #ffffff;     /* Headings, key content */
+  --text-secondary:   #e2e8f0;     /* Body text */
+  --text-tertiary:    #94a3b8;     /* Subtitles, captions */
+  --text-disabled:    #64748b;     /* Disabled state */
+  --text-on-light:    #1a0a24;     /* Text on light surfaces */
   /* Text sizes */
   --text-size-small: 0.875rem;
   --text-size-medium: 1rem;
@@ -20,11 +41,15 @@
   --spacing-large: 1.5rem;
   --spacing-xlarge: 2rem;
   /* Font */
-  --font-family: 'Arimo', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-family: 'Inter', sans-serif;
   /* Shadows */
-  --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-dark: 0 10px 20px rgba(0, 0, 0, 0.1);
+  --shadow-sm:        0 2px 8px rgba(18, 6, 25, 0.4);
+  --shadow-md:        0 8px 24px rgba(18, 6, 25, 0.5);
+  --shadow-lg:        0 20px 60px rgba(18, 6, 25, 0.7);
+  --shadow-glow:      0 0 60px -10px rgba(208, 137, 255, 0.45);
+  --shadow-glow-sm:   0 0 20px rgba(208, 137, 255, 0.3);
+  --shadow-danger:    0 0 40px rgba(239, 68, 68, 0.4);
   /* Border radius */
   --border-radius-small: 4px;
   --border-radius-medium: 8px;
@@ -39,6 +64,23 @@
   --transition-fast: 0.2s;
   --transition-medium: 0.5s;
   --transition-slow: 1s;
+  /* Status */
+  --success:          #10b981;   /* Green — safe, verified */
+  --success-bg:       rgba(16, 185, 129, 0.15);
+  --warning:          #f59e0b;   /* Amber — caution */
+  --warning-bg:       rgba(245, 158, 11, 0.15);
+  --danger:           #ef4444;   /* Red — phishing detected */
+  --danger-bg:        rgba(239, 68, 68, 0.15);
+  --info:             #3b82f6;   /* Blue — informational */
+  --info-bg:          rgba(59, 130, 246, 0.15);
+  /* Gradients */
+  --gradient-primary:    linear-gradient(135deg, #d089ff 0%, #9d4cd1 100%);
+  --gradient-hero:       radial-gradient(ellipse 80% 60% at 50% 0%, rgba(157, 76, 209, 0.4), transparent 70%),                  linear-gradient(180deg, #120619 0%, #0a0310 100%);
+  --gradient-text:       linear-gradient(135deg, #ffffff 0%, #d089ff 100%);
+  --gradient-card:       linear-gradient(160deg, rgba(26, 10, 36, 0.8) 0%, rgba(18, 6, 25, 0.4) 100%);
+  --gradient-border:     linear-gradient(135deg, rgba(208, 137, 255, 0.3), rgba(208, 137, 255, 0.1));
+  --gradient-danger:     linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  --gradient-success:    linear-gradient(135deg, #10b981 0%, #047857 100%);
 
 }
 
