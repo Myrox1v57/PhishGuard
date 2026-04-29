@@ -66,21 +66,6 @@ const scannerLinks = [
 export default function NavHeader() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLLIElement>(null);
-  const [currentTime, setCurrentTime] = useState(() => {
-    const now = new Date();
-    return `${String(now.getUTCHours()).padStart(2, "0")}:${String(now.getUTCMinutes()).padStart(2, "0")}`;
-  });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      setCurrentTime(
-        `${String(now.getUTCHours()).padStart(2, "0")}:${String(now.getUTCMinutes()).padStart(2, "0")}`
-      );
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
   useEffect(() => {
     function onPointerDown(event: MouseEvent) {
       if (!dropdownRef.current?.contains(event.target as Node)) {
