@@ -258,8 +258,8 @@
 .ctaButton {
   text-decoration: none;
   color: var(--text-main);
-  background: var(--gradient-border);
-  padding: 0.55rem 0.9rem;
+  background: var(--bg-overlay);
+  padding: 0.75rem 0.9rem;
   border-radius: 0.55rem;
   font-weight: 600;
   transition: var(--transition-medium);

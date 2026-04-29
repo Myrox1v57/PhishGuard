@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Grotesk:wght@300..700&display=swap');
 
 :root {
@@ -81,6 +82,8 @@
   --gradient-border:     linear-gradient(135deg, rgba(208, 137, 255, 0.3), rgba(208, 137, 255, 0.1));
   --gradient-danger:     linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
   --gradient-success:    linear-gradient(135deg, #10b981 0%, #047857 100%);
+
+  --border-color: 1px solid rgba(122, 53, 168, 0.45)
 
 }
 

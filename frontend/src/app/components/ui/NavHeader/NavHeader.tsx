@@ -158,8 +158,8 @@ export default function NavHeader() {
           <Link className={styles.loginLink} href="/login">
             Login
           </Link>
-          <Link className={styles.ctaButton} href="/scanner/url">
-            New Scan
+          <Link className={styles.ctaButton} href="/register">
+            Get Started
           </Link>
         </div>
       </nav>
