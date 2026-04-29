@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "../../../utils/superbase/client";
 import styles from "./RegisterForm.module.css";
 
 export default function RegisterForm() {
-  const router = useRouter();
   const supabase = createClient();
 
   const [email, setEmail] = useState("");
@@ -35,7 +33,9 @@ export default function RegisterForm() {
       return;
     }
 
-    router.push("/dashboard");
+    await supabase.auth.signOut();
+    setLoading(false);
+    window.location.href = "/check-email";
   }
 
   return (

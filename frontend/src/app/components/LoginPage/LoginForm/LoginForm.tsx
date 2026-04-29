@@ -1,19 +1,46 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "../../../utils/superbase/client";
 import styles from "./LoginForm.module.css";
 
 export default function LoginForm() {
-  const router = useRouter();
   const supabase = createClient();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function checkExistingSession() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (mounted && session) {
+        window.location.href = "/dashboard";
+      }
+    }
+
+    void checkExistingSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        window.location.href = "/dashboard";
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -28,7 +55,11 @@ export default function LoginForm() {
       return;
     }
 
-    router.push("/dashboard");
+    window.location.href = "/dashboard";
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
   }
 
   return (
@@ -61,7 +92,7 @@ export default function LoginForm() {
           <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className={styles.input}  placeholder="•••••••••••" />
         </div>
         {error && <p className={styles.error}>{error}</p>}
-        <button type="submit" disabled={loading} className={styles.button}>
+        <button type="submit" disabled={loading} className={styles.button} >
           {loading ? "Signing in..." : "Sign In"}
         </button>
         <div className={styles.footer}>
