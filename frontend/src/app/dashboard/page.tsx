@@ -15,11 +15,6 @@ export default function DashboardPage() {
 
   return (
     <main className={styles.page}>
-      <h1 className={styles.title}>Dashboard</h1>
-      <button onClick={handleSignOut} className={styles.signOut}>
-        Sign Out
-
-      </button>
     </main>
   );
 }
