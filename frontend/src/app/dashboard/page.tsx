@@ -12,13 +12,17 @@ export default function DashboardPage() {
     await supabase.auth.signOut();
     router.push("/login");
   }
-
+  function handeGoHome() {
+    router.push("/");
+  }
   return (
     <main className={styles.page}>
       <h1 className={styles.title}>Dashboard</h1>
       <button onClick={handleSignOut} className={styles.signOut}>
         Sign Out
-
+      </button>
+      <button onClick={handeGoHome} className={styles.goHome}>
+        Go Home
       </button>
     </main>
   );
