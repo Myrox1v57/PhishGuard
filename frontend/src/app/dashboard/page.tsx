@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { createClient } from "../utils/superbase/client";
 import styles from "./dashboard.module.css";
+import SideNav from "../components/Dashboard/SideNav/SideNav";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -17,11 +18,13 @@ export default function DashboardPage() {
   }
   return (
     <main className={styles.page}>
-      <h1 className={styles.title}>Dashboard</h1>
-      <button onClick={handleSignOut} className={styles.signOut}>
-        Sign Out
-
+      <SideNav onSignOut={handleSignOut} />
+      <div className={styles.content}>
+        <h1 className={styles.title}>Dashboard</h1>
+       <button onClick={handeGoHome} className={styles.goHome}>
+        Go to Home Page
       </button>
+      </div>
     </main>
   );
 }

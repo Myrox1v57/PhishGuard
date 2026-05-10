@@ -1,0 +1,142 @@
+.sideNav {
+  display: flex;
+  flex-direction: column;
+  width: 272px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #14061d 0%, #0d0314 100%);
+  border-right: 1px solid rgba(122, 53, 168, 0.2);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.03);
+}
+
+.brandBlock {
+  padding: 18px 20px 18px;
+  border-bottom: var(--border-nav);
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+}
+
+
+.logoText {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--text-primary);
+  
+}
+
+.menuBlock {
+  margin-top: 34px;
+}
+
+.menuLabel {
+  margin-bottom: 5px;
+  padding-left: 20px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.menuGlow {
+  height: 22px;
+  border-radius: 999px;
+  width: 90%;
+  margin: 0 auto;
+  background: rgba(11, 3, 18, 0.95);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.navList {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 10px 24px;
+  list-style: none;
+}
+
+.navItem {
+  list-style: none;
+}
+
+.navItemBottom {
+  margin-top: auto;
+}
+
+.navLink,
+.logoutButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-family);
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: left;
+  transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+.navLink:hover,
+.logoutButton:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  transform: translateX(2px);
+}
+
+.navLinkActive {
+  background: rgba(208, 137, 255, 0.1);
+  color: var(--text-active);
+}
+
+.navIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: currentColor;
+}
+
+.navIcon svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.footerBlock {
+  padding: 18px 10px 24px;
+  border-top: 1px solid rgba(122, 53, 168, 0.16);
+}
+
+.logoutButton {
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+@media (max-width: 900px) {
+  .sideNav {
+    width: 100%;
+    min-height: auto;
+  }
+
+  .navList {
+    padding-bottom: 18px;
+  }
+}

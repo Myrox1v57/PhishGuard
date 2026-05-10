@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { createClient } from "../../../utils/superbase/client";
 import styles from "./NavHeader.module.css";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Dashboard", href: "/dashboard" },
+  { name: "Learn", href: "/dashboard/learn" },
   { name: "Alerts", href: "/alerts" },
   { name: "Reports", href: "/reports" },
 ];
@@ -24,7 +25,7 @@ const scannerLinks = [
     ),
   },
   {
-    name: "Email Sentinel",
+    name: "Email Spoofing Detector",
     href: "/scanner/email",
     label: "Heuristic spoofing detection",
     icon: (
@@ -35,7 +36,7 @@ const scannerLinks = [
     ),
   },
   {
-    name: "Static Binary",
+    name: "Attachment Scanner",
     href: "/scanner/attachment",
     label: "Sandbox attachments safely",
     icon: (
@@ -48,7 +49,7 @@ const scannerLinks = [
     ),
   },
   {
-    name: "Optical Shield",
+    name: "QR Code Scanner",
     href: "/scanner/qr-scanner",
     label: "Reveal hidden QR destinations",
     icon: (
@@ -64,8 +65,38 @@ const scannerLinks = [
 ];
 
 export default function NavHeader() {
+  const [supabase] = useState(createClient);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const dropdownRef = useRef<HTMLLIElement>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function checkSession() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (mounted) {
+        setIsLoggedIn(Boolean(session));
+      }
+    }
+
+    void checkSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(Boolean(session));
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
   useEffect(() => {
     function onPointerDown(event: MouseEvent) {
       if (!dropdownRef.current?.contains(event.target as Node)) {
@@ -121,12 +152,7 @@ export default function NavHeader() {
               onClick={toggleDropdown}
             >
                 Scanners
-                <img
-                  src="/dropdown-arrow.svg"
-                  alt=""
-                  className={styles.dropdownArrow}
-                  aria-hidden="true"
-                />
+                <img src="/dropdown-arrow.svg" alt="" className={styles.dropdownArrow} aria-hidden="true"/>
               </button>
               <div className={`${styles.dropdownMenu} ${isDropdownOpen ? styles.dropdownMenuOpen : ""}`} role="menu">
                 <div className={styles.dropdownHeader}>
@@ -135,13 +161,7 @@ export default function NavHeader() {
 
                 <div className={styles.dropdownGrid}>
                   {scannerLinks.map((link) => (
-                    <Link
-                      key={link.name}
-                      className={styles.dropdownCard}
-                      href={link.href}
-                      role="menuitem"
-                      onClick={closeDropdown}
-                    >
+                    <Link key={link.name} className={styles.dropdownCard} href={link.href} role="menuitem" onClick={closeDropdown}>
                       <div className={styles.cardIcon}>{link.icon}</div>
                       <div className={styles.cardContent}>
                         <span className={styles.cardTitle}>{link.name}</span>
@@ -155,12 +175,20 @@ export default function NavHeader() {
         </ul>
 
         <div className={styles.actions}>
-          <Link className={styles.loginLink} href="/login">
-            Login
-          </Link>
-          <Link className={styles.ctaButton} href="/register">
-            Get Started
-          </Link>
+          {isLoggedIn ? (
+            <Link className={styles.ctaButton} href="/dashboard">
+              Scan Now
+            </Link>
+          ) : (
+            <>
+              <Link className={styles.loginLink} href="/login">
+                Login
+              </Link>
+              <Link className={styles.ctaButton} href="/register">
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
       </nav>
     </header>
