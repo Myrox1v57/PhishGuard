@@ -20,7 +20,12 @@
   gap: 12px;
 
 }
-
+.text {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.15rem;
+    color: var(--text-muted);
+}
 .logoText {
   font-family: var(--font-display);
   font-size: 1.75rem;

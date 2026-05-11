@@ -17,6 +17,7 @@ export default function TopNav({ isSideNavCollapsed, onToggleSideNav, profileIni
                     <span className={styles.logoText}>PhishGuard</span>
                 </Link>
             </div>
+            <span className={styles.text}>My Space</span>
              <button
                     type="button"
                     className={styles.toggleButton}
