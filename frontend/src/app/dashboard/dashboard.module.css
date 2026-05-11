@@ -1,7 +1,19 @@
 .page {
   min-height: 100vh;
-  display: flex;
-  color : var(--text-primary);
+  color: var(--text-primary);
   font-family: var(--font-family);
+  display: flex;
+  flex-direction: column;
 }
 
+.layout {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.content {
+  flex: 1 1 auto;
+  padding: var(--padding-large);
+  min-width: 0;
+}

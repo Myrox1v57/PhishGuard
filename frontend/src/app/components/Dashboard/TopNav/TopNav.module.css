@@ -1,0 +1,96 @@
+.nav {
+	display: flex;
+	padding: 10px 0 18px;
+    height: 58px;
+ background: var(--bg-base);
+  border-bottom: 1px solid rgba(122, 53, 168, 0.2);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.03);
+}
+.brandBlock {
+    display: flex;
+    align-items: center;
+    padding: 0px 40px 0 0px;
+    gap: 12px;
+    border-right: 1px solid rgba(122, 53, 168, 0.45);
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+}
+
+.logoText {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  
+}
+.leftControls {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+    padding: 20px;
+	gap: 2.1rem;
+}
+
+.rightControls {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+    padding:20px ;
+	gap: 10px;
+}
+
+.toggleButton {
+	width: 30px;
+	height: 30px;
+	border: 1px solid rgba(122, 53, 168, 0.45);
+	border-radius: 99px;
+	background: rgba(26, 10, 36, 0.65);
+	color: var(--text-primary);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.toggleButton:hover {
+	transform: translateY(-1px);
+	background: rgba(35, 14, 50, 0.8);
+	border-color: rgba(208, 137, 255, 0.6);
+}
+
+.toggleButton svg {
+	width: 18px;
+	height: 18px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.8;
+	stroke-linecap: round;
+}
+
+.profileButton {
+	width: 42px;
+	height: 42px;
+	border-radius: 999px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(135deg, #d089ff 0%, #8e46c6 100%);
+	color: #13061d;
+	font-size: 1rem;
+	font-weight: 800;
+	letter-spacing: 0.03em;
+	box-shadow: 0 8px 20px rgba(141, 72, 194, 0.4);
+	transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.profileButton:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 10px 26px rgba(141, 72, 194, 0.5);
+}

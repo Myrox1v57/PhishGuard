@@ -6,6 +6,7 @@ import styles from './SideNav.module.css';
 
 type SideNavProps = {
     onSignOut?: () => void;
+    isCollapsed?: boolean;
 };
 
 const icons = {
@@ -54,7 +55,7 @@ const icons = {
     ),
 };
 
-export default function SideNav({ onSignOut }: SideNavProps) {
+export default function SideNav({ onSignOut, isCollapsed = false }: SideNavProps) {
     const pathname = usePathname();
     const navLinks = [
         { name: 'Overview', href: '/dashboard', icon: icons.overview },
@@ -65,12 +66,8 @@ export default function SideNav({ onSignOut }: SideNavProps) {
     ];
 
     return (
-        <nav className={styles.sideNav}>
-            <div className={styles.brandBlock}>
-                <Link href="/" className={styles.logoLink}>
-                    <span className={styles.logoText}>PhishGuard</span>
-                </Link>
-            </div>
+        <nav className={`${styles.sideNav} ${isCollapsed ? styles.sideNavCollapsed : ''}`}>
+            
              <div className={styles.menuBlock}>
                     <p className={styles.menuLabel}>Menu</p>
                     <div className={styles.menuGlow} aria-hidden="true" />
@@ -81,17 +78,28 @@ export default function SideNav({ onSignOut }: SideNavProps) {
 
                     return (
                     <li key={link.name} className={`${styles.navItem} ${link.name === 'Settings' ? styles.navItemBottom : ''}`}>
-                        <Link href={link.href} className={`${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}>
+                        <Link
+                            href={link.href}
+                            className={`${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
+                            title={isCollapsed ? link.name : undefined}
+                            data-tooltip={isCollapsed ? link.name : undefined}
+                        >
                             <span className={styles.navIcon}>{link.icon}</span>
-                            <span>{link.name}</span>
+                            {!isCollapsed && <span>{link.name}</span>}
                         </Link>
                     </li>
                 );})}
             </ul>
             <div className={styles.footerBlock}>
-                <button type="button" className={styles.logoutButton} onClick={onSignOut}>
+                <button
+                    type="button"
+                    className={styles.logoutButton}
+                    onClick={onSignOut}
+                    title={isCollapsed ? 'Log out' : undefined}
+                    data-tooltip={isCollapsed ? 'Log out' : undefined}
+                >
                     <span className={styles.navIcon}>{icons.logout}</span>
-                    <span>Log out</span>
+                    {!isCollapsed && <span>Log out</span>}
                 </button>
             </div>
         </nav>
