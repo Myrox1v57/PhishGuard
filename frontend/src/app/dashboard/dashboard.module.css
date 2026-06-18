@@ -17,3 +17,34 @@
   padding: var(--padding-large);
   min-width: 0;
 }
+
+.title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.sectionDescription {
+  margin-top: 0.75rem;
+  margin-bottom: 1.5rem;
+  max-width: 58ch;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.goHome {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  padding: 0.65rem 1rem;
+  text-decoration: none;
+  background: var(--gradient-primary);
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.goHome:hover {
+  filter: brightness(0.95);
+}
