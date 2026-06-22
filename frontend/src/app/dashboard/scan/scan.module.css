@@ -70,7 +70,63 @@
   color: var(--text-tertiary);
   font-size: var(--text-size-small);
 }
+.screenshotSection {
+  margin-top: 1.5rem;
+}
 
+.screenshotContainer {
+  margin-top: 0.75rem;
+  border: var(--border-nav);
+  border-radius: var(--border-radius-large);
+  overflow: hidden;
+  background: var(--bg-elevated);
+  position: relative;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.screenshotImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.screenshotImageLoaded {
+  opacity: 1;
+}
+
+.screenshotPlaceholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: var(--text-tertiary);
+  background: var(--bg-elevated);
+}
+
+.pulse {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  animation: pulse-animation 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse-animation {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+  100% { transform: scale(0.8); opacity: 0.5; }
+}
 .verdict {
   margin: 0.15rem 0 0;
   font-size: 1.35rem;

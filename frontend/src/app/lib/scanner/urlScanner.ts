@@ -4,6 +4,34 @@ import type { UrlScannerComponents, UrlScannerResult, UrlSignal } from "./urlSca
 const SUSPICIOUS_TLDS = new Set(["zip", "top", "click", "xyz", "work", "gq", "tk", "ml", "cf"]);
 const SUSPICIOUS_KEYWORDS = ["login", "verify", "secure", "account", "password", "update", "confirm", "wallet"];
 const URGENCY_KEYWORDS = ["urgent", "immediately", "suspended", "verify now", "action required"];
+const URLSCAN_API_KEY = process.env.URLSCAN_API_KEY;
+
+type UrlscanSearchResponse = {
+  results?: Array<{
+    task?: {
+      uuid?: string;
+      url?: string;
+      time?: string;
+    };
+    verdicts?: {
+      overall?: {
+        score?: number;
+        malicious?: boolean;
+      };
+    };
+  }>;
+};
+
+type UrlscanTriggerResponse = {
+  uuid?: string;
+};
+
+type UrlscanLookupResult = {
+  uuid?: string;
+  source: "none" | "search" | "scan";
+  score: number;
+  malicious: boolean;
+};
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
@@ -96,6 +124,115 @@ async function followRedirects(initialUrl: URL): Promise<{ finalUrl: URL; chain:
     html,
   };
 }
+async function searchUrlScan(url: string): Promise<UrlscanLookupResult> {
+  if (!URLSCAN_API_KEY) {
+    return {
+      source: "none",
+      score: 0,
+      malicious: false,
+    };
+  }
+
+  try {
+    const query = encodeURIComponent(`page.url:"${url}"`);
+    const response = await fetch(`https://urlscan.io/api/v1/search/?q=${query}&size=1`, {
+      headers: {
+        "API-Key": URLSCAN_API_KEY,
+      },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return {
+        source: "none",
+        score: 0,
+        malicious: false,
+      };
+    }
+
+    const payload = (await response.json()) as UrlscanSearchResponse;
+    const firstResult = payload.results?.[0];
+    if (!firstResult?.task?.uuid) {
+      return {
+        source: "none",
+        score: 0,
+        malicious: false,
+      };
+    }
+
+    const rawScore = firstResult.verdicts?.overall?.score ?? 0;
+    const score = Number.isFinite(rawScore) ? clamp(rawScore, 0, 100) : 0;
+    const malicious = Boolean(firstResult.verdicts?.overall?.malicious) || score >= 40;
+
+    return {
+      uuid: firstResult.task.uuid,
+      source: "search",
+      score,
+      malicious,
+    };
+  } catch {
+    return {
+      source: "none",
+      score: 0,
+      malicious: false,
+    };
+  }
+}
+
+export async function triggerUrlScan(url: string): Promise<UrlscanLookupResult> {
+  if (!URLSCAN_API_KEY) {
+    return {
+      source: "none",
+      score: 0,
+      malicious: false,
+    };
+  }
+
+  const response = await fetch("https://urlscan.io/api/v1/scan/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "API-Key": URLSCAN_API_KEY,
+    },
+    body: JSON.stringify({
+      url,
+      visibility: "unlisted",
+    }),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to trigger URL scan: ${response.status} ${response.statusText}`);
+  }
+
+  const payload = (await response.json()) as UrlscanTriggerResponse;
+  return {
+    uuid: payload.uuid,
+    source: payload.uuid ? "scan" : "none",
+    score: 0,
+    malicious: false,
+  };
+}
+
+function calculateRiskScore(components: UrlScannerComponents, overrideFlags: string[]): number {
+  const weightedRisk = 100 * (
+    0.3 * components.lexical +
+    0.25 * components.domain +
+    0.2 * components.reputation +
+    0.15 * components.browser +
+    0.1 * components.ai
+  );
+
+  let riskScore = Math.round(weightedRisk);
+  if (overrideFlags.includes("known_blocklist_hit")) {
+    riskScore = Math.max(riskScore, 90);
+  }
+  if (overrideFlags.includes("brand_impersonation_with_credential_trap")) {
+    riskScore = Math.max(riskScore, 80);
+  }
+
+  return clamp(riskScore, 0, 100);
+}
 
 async function checkSafeBrowsing(url: string): Promise<{ hit: boolean; details?: unknown }> {
   const apiKey = process.env.GOOGLE_SAFE_BROWSING_API_KEY;
@@ -140,7 +277,6 @@ async function checkSafeBrowsing(url: string): Promise<{ hit: boolean; details?:
 export async function runUrlScanner(inputUrl: string): Promise<UrlScannerResult> {
   const normalized = normalizeUrl(inputUrl);
   const redirectData = await followRedirects(normalized);
-
   const pathnameAndQuery = `${redirectData.finalUrl.pathname}${redirectData.finalUrl.search}`.toLowerCase();
   const hostname = redirectData.finalUrl.hostname.toLowerCase();
   const tld = hostname.split(".").pop() ?? "";
@@ -170,12 +306,14 @@ export async function runUrlScanner(inputUrl: string): Promise<UrlScannerResult>
   const hasPasswordInput = /<input[^>]*type=["']password["'][^>]*>/i.test(redirectData.html);
   const hasSuspiciousIframes = /<iframe[^>]*(display\s*:\s*none|visibility\s*:\s*hidden)[^>]*>/i.test(redirectData.html);
   const hasUrgencyLanguage = URGENCY_KEYWORDS.some((word) => redirectData.html.toLowerCase().includes(word));
+  const htmlUnavailable = redirectData.html.trim().length === 0;
 
   const browserSignals: UrlSignal[] = [
     signal("browser", "redirect_chain_long", redirectData.chain.length >= 4, 0.25, "Multiple redirects before final page", undefined, { redirects: redirectData.chain.length - 1 }),
     signal("browser", "credential_form_present", hasPasswordInput, 0.35, "Password input detected in page content"),
     signal("browser", "hidden_iframe", hasSuspiciousIframes, 0.2, "Hidden iframe pattern detected"),
     signal("browser", "urgency_language", hasUrgencyLanguage, 0.2, "Urgency language found in page content"),
+    signal("browser", "html_unavailable", htmlUnavailable, 0.25, "Could not retrieve usable HTML content from target site"),
   ];
 
   const aiSignals: UrlSignal[] = [];
@@ -202,7 +340,7 @@ export async function runUrlScanner(inputUrl: string): Promise<UrlScannerResult>
     );
   }
 
-  const components: UrlScannerComponents = {
+  const componentsBeforeUrlscan: UrlScannerComponents = {
     lexical: normalizeComponentScore(lexicalSignals),
     domain: normalizeComponentScore(domainSignals),
     reputation: normalizeComponentScore(reputationSignals),
@@ -216,26 +354,65 @@ export async function runUrlScanner(inputUrl: string): Promise<UrlScannerResult>
     overrideFlags.push("known_blocklist_hit");
   }
 
-  if (components.domain >= 0.6 && hasPasswordInput && components.lexical >= 0.45) {
+  if (componentsBeforeUrlscan.domain >= 0.6 && hasPasswordInput && componentsBeforeUrlscan.lexical >= 0.45) {
     overrideFlags.push("brand_impersonation_with_credential_trap");
   }
 
-  const weightedRisk = 100 * (
-    0.3 * components.lexical +
-    0.25 * components.domain +
-    0.2 * components.reputation +
-    0.15 * components.browser +
-    0.1 * components.ai
-  );
+  const preRiskScore = calculateRiskScore(componentsBeforeUrlscan, overrideFlags);
 
-  let riskScore = Math.round(weightedRisk);
-  if (overrideFlags.includes("known_blocklist_hit")) {
-    riskScore = Math.max(riskScore, 90);
+  let urlscanResult = await searchUrlScan(redirectData.finalUrl.toString());
+  if (urlscanResult.source === "none" && preRiskScore >= 30) {
+    try {
+      urlscanResult = await triggerUrlScan(redirectData.finalUrl.toString());
+    } catch {
+      urlscanResult = {
+        source: "none",
+        score: 0,
+        malicious: false,
+      };
+    }
   }
-  if (overrideFlags.includes("brand_impersonation_with_credential_trap")) {
-    riskScore = Math.max(riskScore, 80);
+
+  if (urlscanResult.source === "search") {
+    reputationSignals.push(
+      signal(
+        "reputation",
+        "urlscan_search_malicious",
+        urlscanResult.malicious,
+        0.8,
+        "URLScan search flagged this URL as suspicious/malicious",
+        clamp(urlscanResult.score / 100, 0, 1),
+        {
+          uuid: urlscanResult.uuid,
+          score: urlscanResult.score,
+        },
+      ),
+    );
+  } else if (urlscanResult.source === "scan") {
+    reputationSignals.push(
+      signal(
+        "reputation",
+        "urlscan_live_scan_queued",
+        true,
+        0,
+        "URLScan live scan was queued for deeper analysis",
+        undefined,
+        {
+          uuid: urlscanResult.uuid,
+        },
+      ),
+    );
   }
-  riskScore = clamp(riskScore, 0, 100);
+
+  const components: UrlScannerComponents = {
+    lexical: normalizeComponentScore(lexicalSignals),
+    domain: normalizeComponentScore(domainSignals),
+    reputation: normalizeComponentScore(reputationSignals),
+    browser: normalizeComponentScore(browserSignals),
+    ai: aiScore,
+  };
+
+  const riskScore = calculateRiskScore(components, overrideFlags);
 
   const confidenceParts = [
     components.lexical > 0 ? 18 : 0,
@@ -258,7 +435,6 @@ export async function runUrlScanner(inputUrl: string): Promise<UrlScannerResult>
   } else if (riskScore >= 25) {
     verdict = "suspicious";
   }
-
   const allSignals = [...lexicalSignals, ...domainSignals, ...reputationSignals, ...browserSignals, ...aiSignals];
   const reasons = allSignals.filter((entry) => entry.triggered).map((entry) => entry.reason);
 
@@ -278,5 +454,8 @@ export async function runUrlScanner(inputUrl: string): Promise<UrlScannerResult>
     components,
     overrideFlags,
     model,
+    urlscanUuid: urlscanResult.uuid,
+    urlscanSource: urlscanResult.source,
+    urlscanScore: urlscanResult.score,
   };
 }

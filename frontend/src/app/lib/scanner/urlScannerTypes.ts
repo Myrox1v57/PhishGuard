@@ -31,6 +31,9 @@ export type UrlScannerResult = {
   signals: UrlSignal[];
   components: UrlScannerComponents;
   overrideFlags: string[];
+  urlscanUuid?: string;
+  urlscanSource?: "none" | "search" | "scan";
+  urlscanScore?: number;
   model?: {
     provider: string;
     name: string;

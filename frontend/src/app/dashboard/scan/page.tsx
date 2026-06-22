@@ -20,6 +20,9 @@ type ScanResponse = {
     confidence: number;
     verdict: "safe" | "suspicious" | "phishing_likely" | "malicious_likely";
     final_url: string;
+    urlscan_uuid?: string;
+    urlscan_source?: "none" | "search" | "scan";
+    urlscan_score?: number;
     reasons: string[];
     signals: Signal[];
     components: {
@@ -40,11 +43,13 @@ const verdictLabel: Record<ScanResponse["result"]["verdict"], string> = {
   malicious_likely: "Malicious Likely",
 };
 
+
 export default function DashboardScanPage() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ScanResponse | null>(null);
+  const [imageLoading, setImageLoading] = useState(true); 
 
   const riskColorClass = useMemo(() => {
     const score = result?.result.risk_score ?? 0;
@@ -64,6 +69,7 @@ export default function DashboardScanPage() {
     event.preventDefault();
     setError(null);
     setLoading(true);
+    setImageLoading(true); // Reset image loading state when a new scan is initiated
 
     try {
       const response = await fetch("/api/scanner/url", {
@@ -88,7 +94,6 @@ export default function DashboardScanPage() {
       setLoading(false);
     }
   }
-
   return (
     <section>
       <h1 className={dashboardStyles.title}>URL Scanner</h1>
@@ -119,7 +124,6 @@ export default function DashboardScanPage() {
         <article className={styles.resultCard}>
           <header className={styles.resultHeader}>
             <div>
-              <p className={styles.metaLabel}>Verdict</p>
               <h2 className={styles.verdict}>{verdictLabel[result.result.verdict]}</h2>
             </div>
             <div className={`${styles.riskBadge} ${riskColorClass}`}>
@@ -134,7 +138,31 @@ export default function DashboardScanPage() {
           <p className={styles.metaText}>
             Final URL: {result.result.final_url}
           </p>
-
+          
+         
+        {result.result.urlscan_uuid && (
+           <div className={styles.sectionBlock}>
+              <h3 className={styles.blockTitle}>Preview</h3>
+             <div className={styles.screenshotContainer}>
+            {imageLoading && (
+            <div className={styles.screenshotPlaceholder}>
+          <div className={styles.pulse}></div>
+          <p>Retrieving site screenshot...</p>
+          </div>
+        )}
+        <img
+          src={`https://urlscan.io/screenshots/${result.result.urlscan_uuid}.png`}
+          alt="Site Screenshot"
+          className={`${styles.screenshotImage} ${!imageLoading ? styles.screenshotImageLoaded : ""}`}
+          onLoad={() => setImageLoading(false)}
+          onError={() => {
+          // If a live scan was just started, the image might not be ready.
+          // You could implement a retry logic here.
+        }}
+      />
+    </div>
+  </div>
+)}
           <div className={styles.sectionBlock}>
             <h3 className={styles.blockTitle}>Why this score</h3>
             <ul className={styles.reasonList}>
